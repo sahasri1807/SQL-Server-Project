@@ -1,0 +1,9 @@
+CREATE TABLE ListeningHistory (
+    HistoryID INT IDENTITY(1,1) PRIMARY KEY,
+    UserID INT NOT NULL,
+    SongID INT NOT NULL,
+    PlayedAt DATETIME DEFAULT GETDATE(),
+
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (SongID) REFERENCES Songs(SongID)
+);
