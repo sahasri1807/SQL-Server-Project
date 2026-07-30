@@ -3,7 +3,8 @@
   Procedure : dbo.CreatePlaylist
   Purpose   : Create a playlist for an active user.
   Uses      : Playlists (UserID, PlaylistName), Users (Status)
-==============================================================================*/
+==============================================================================
+*/
 CREATE OR ALTER PROCEDURE dbo.CreatePlaylist
     @UserID         INT,
     @PlaylistName   VARCHAR(100),
