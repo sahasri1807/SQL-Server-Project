@@ -6,11 +6,6 @@
   Cursor    : DECLARE / OPEN / FETCH / WHILE / CLOSE / DEALLOCATE (DYNAMIC)
 ==============================================================================
 */
-CREATE OR ALTER PROCEDURE dbo.ProcessSongsDynamicCursor
-    @MinPlayCount INT = 0
-AS
-BEGIN
-    SET NOCOUNT ON;
 
     DECLARE @SongID INT;
     DECLARE @Title VARCHAR(100);
