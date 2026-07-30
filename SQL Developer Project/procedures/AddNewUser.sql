@@ -58,5 +58,5 @@ BEGIN
         SET @NewUserID = NULL;
         THROW 50099, @ErrorMessage, 1;
     END CATCH
-END
+END;
 GO
