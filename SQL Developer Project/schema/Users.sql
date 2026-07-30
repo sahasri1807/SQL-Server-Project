@@ -5,4 +5,4 @@ CREATE TABLE Users (
     RoleID INT,
     CreatedAt DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (RoleID) REFERENCES Roles(RoleID)
-);
+)
