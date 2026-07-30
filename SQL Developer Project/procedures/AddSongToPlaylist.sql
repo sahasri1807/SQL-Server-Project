@@ -5,9 +5,6 @@
   Uses      : PlaylistSongs (PlaylistID, SongID), Playlists, Songs
 ==============================================================================
 */
-CREATE OR ALTER PROCEDURE dbo.AddSongToPlaylist
-    @PlaylistID INT,
-    @SongID     INT
 AS
 BEGIN
     SET NOCOUNT ON;
