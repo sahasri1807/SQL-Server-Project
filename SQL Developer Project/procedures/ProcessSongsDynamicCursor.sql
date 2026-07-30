@@ -74,7 +74,8 @@ WHERE object_id = OBJECT_ID(''dbo.Songs'');';
             IF CURSOR_STATUS('local', 'song_cursor') > -1
                 CLOSE song_cursor;
             DEALLOCATE song_cursor;
-        END
+        END;
+        /* THROW must follow a semicolon-terminated statement */
         THROW;
     END CATCH
 END;

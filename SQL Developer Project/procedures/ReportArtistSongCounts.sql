@@ -59,7 +59,8 @@ BEGIN
             IF CURSOR_STATUS('local', 'artist_cursor') > -1
                 CLOSE artist_cursor;
             DEALLOCATE artist_cursor;
-        END
+        END;
+        /* THROW must follow a semicolon-terminated statement */
         THROW;
     END CATCH
 END;

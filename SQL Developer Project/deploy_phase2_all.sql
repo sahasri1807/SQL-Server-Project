@@ -2,6 +2,7 @@
   Auto-generated concatenated Phase 2 deploy script.
   Select your music database in SSMS, then Execute.
   Generated for SQL Server 2016+ (CREATE OR ALTER requires 2016 SP1).
+  Regenerate: bash "SQL Developer Project/build_deploy_phase2_all.sh"
 */
 SET NOCOUNT ON;
 PRINT 'Phase 2 deploy starting on: ' + DB_NAME();
@@ -778,7 +779,8 @@ BEGIN
             IF CURSOR_STATUS('local', 'artist_cursor') > -1
                 CLOSE artist_cursor;
             DEALLOCATE artist_cursor;
-        END
+        END;
+        /* THROW must follow a semicolon-terminated statement */
         THROW;
     END CATCH
 END;
@@ -864,7 +866,8 @@ WHERE object_id = OBJECT_ID(''dbo.Songs'');';
             IF CURSOR_STATUS('local', 'song_cursor') > -1
                 CLOSE song_cursor;
             DEALLOCATE song_cursor;
-        END
+        END;
+        /* THROW must follow a semicolon-terminated statement */
         THROW;
     END CATCH
 END;
@@ -1089,7 +1092,8 @@ GRANT INSERT, UPDATE ON dbo.Albums TO MusicArtist;
 GRANT EXECUTE ON dbo.AddSong TO MusicArtist;
 GRANT EXECUTE ON dbo.SearchSongsDynamic TO MusicArtist;
 GRANT EXECUTE ON dbo.GetSongPlayCount TO MusicArtist;
-GRANT EXECUTE ON dbo.ReportArtistSongCounts TO MusicArtist;
+IF OBJECT_ID(N'dbo.ReportArtistSongCounts', N'P') IS NOT NULL
+    GRANT EXECUTE ON dbo.ReportArtistSongCounts TO MusicArtist;
 
 DENY DELETE ON dbo.ListeningHistory TO MusicArtist;
 DENY EXECUTE ON dbo.AddNewUser TO MusicArtist;
@@ -1104,8 +1108,10 @@ GRANT UPDATE ON dbo.Songs TO MusicModerator;
 GRANT UPDATE ON dbo.Users TO MusicModerator;
 GRANT DELETE ON dbo.PlaylistSongs TO MusicModerator;
 GRANT EXECUTE ON dbo.SearchSongsDynamic TO MusicModerator;
-GRANT EXECUTE ON dbo.ReportArtistSongCounts TO MusicModerator;
-GRANT EXECUTE ON dbo.ProcessSongsDynamicCursor TO MusicModerator;
+IF OBJECT_ID(N'dbo.ReportArtistSongCounts', N'P') IS NOT NULL
+    GRANT EXECUTE ON dbo.ReportArtistSongCounts TO MusicModerator;
+IF OBJECT_ID(N'dbo.ProcessSongsDynamicCursor', N'P') IS NOT NULL
+    GRANT EXECUTE ON dbo.ProcessSongsDynamicCursor TO MusicModerator;
 GRANT EXECUTE ON dbo.GetSongPlayCount TO MusicModerator;
 
 DENY EXECUTE ON dbo.AddNewUser TO MusicModerator;

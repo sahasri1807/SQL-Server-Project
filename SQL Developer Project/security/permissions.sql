@@ -82,7 +82,8 @@ GRANT INSERT, UPDATE ON dbo.Albums TO MusicArtist;
 GRANT EXECUTE ON dbo.AddSong TO MusicArtist;
 GRANT EXECUTE ON dbo.SearchSongsDynamic TO MusicArtist;
 GRANT EXECUTE ON dbo.GetSongPlayCount TO MusicArtist;
-GRANT EXECUTE ON dbo.ReportArtistSongCounts TO MusicArtist;
+IF OBJECT_ID(N'dbo.ReportArtistSongCounts', N'P') IS NOT NULL
+    GRANT EXECUTE ON dbo.ReportArtistSongCounts TO MusicArtist;
 
 DENY DELETE ON dbo.ListeningHistory TO MusicArtist;
 DENY EXECUTE ON dbo.AddNewUser TO MusicArtist;
@@ -97,8 +98,10 @@ GRANT UPDATE ON dbo.Songs TO MusicModerator;
 GRANT UPDATE ON dbo.Users TO MusicModerator;
 GRANT DELETE ON dbo.PlaylistSongs TO MusicModerator;
 GRANT EXECUTE ON dbo.SearchSongsDynamic TO MusicModerator;
-GRANT EXECUTE ON dbo.ReportArtistSongCounts TO MusicModerator;
-GRANT EXECUTE ON dbo.ProcessSongsDynamicCursor TO MusicModerator;
+IF OBJECT_ID(N'dbo.ReportArtistSongCounts', N'P') IS NOT NULL
+    GRANT EXECUTE ON dbo.ReportArtistSongCounts TO MusicModerator;
+IF OBJECT_ID(N'dbo.ProcessSongsDynamicCursor', N'P') IS NOT NULL
+    GRANT EXECUTE ON dbo.ProcessSongsDynamicCursor TO MusicModerator;
 GRANT EXECUTE ON dbo.GetSongPlayCount TO MusicModerator;
 
 DENY EXECUTE ON dbo.AddNewUser TO MusicModerator;
