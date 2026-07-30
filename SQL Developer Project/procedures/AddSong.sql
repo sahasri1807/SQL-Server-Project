@@ -11,7 +11,10 @@ CREATE OR ALTER PROCEDURE dbo.AddSong
     @ArtistID    INT,
     @AlbumID     INT,
     @GenreID     INT,
-  
+    @ReleaseDate DATE = NULL,
+    @NewSongID   INT OUTPUT
+AS
+BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
 
