@@ -12,12 +12,7 @@ BEGIN
 
     DECLARE @ArtistID INT;
     DECLARE @ArtistName VARCHAR(100);
-    DECLARE @SongCount INT;
-
-    /* Result staging table for a clean result set */
-    DECLARE @Report TABLE (
-        ArtistID   INT,
-        ArtistName VARCHAR(100),
+    DECLARE 
         SongCount  INT
     );
 
