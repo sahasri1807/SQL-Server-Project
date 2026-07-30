@@ -6,9 +6,7 @@
   Uses      : Songs.Title, Artists.ArtistName, Genres.GenreName, Songs.PlayCount
 ==============================================================================
 */
-CREATE OR ALTER PROCEDURE dbo.SearchSongsDynamic
-    @GenreName  VARCHAR(50)  = NULL,
-    @ArtistName VARCHAR(100) = NULL,
+CREATE O
     @Title      VARCHAR(100) = NULL
 AS
 BEGIN
