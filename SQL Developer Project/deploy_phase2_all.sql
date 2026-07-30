@@ -1,24 +1,9 @@
-/*
-  Auto-generated concatenated Phase 2 deploy script.
-  Select your music database in SSMS, then Execute.
-  Generated for SQL Server 2016+ (CREATE OR ALTER requires 2016 SP1).
-  Regenerate: bash "SQL Developer Project/build_deploy_phase2_all.sh"
-*/
 SET NOCOUNT ON;
 PRINT 'Phase 2 deploy starting on: ' + DB_NAME();
 GO
 
 PRINT '>>> Running migrations/001_Phase2_SchemaExtensions.sql';
 GO
-/*
-==============================================================================
-  Migration: 001_Phase2_SchemaExtensions.sql
-  Purpose  : Minimal Phase 2 extensions required by procedures/functions.
-  Why      : Phase 1 Subscriptions has no UserID link, and Users has no Status.
-             Instructor Phase 2 needs ManageSubscription + active-user checks.
-  Notes    : Idempotent — safe to re-run. Does NOT invent new tables.
-==============================================================================
-*/
 
 SET NOCOUNT ON;
 GO
