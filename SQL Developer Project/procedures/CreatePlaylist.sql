@@ -7,7 +7,6 @@
 */
 CREATE OR ALTER PROCEDURE dbo.CreatePlaylist
     @UserID         INT,
-    @PlaylistName   VARCHAR(100),
     @NewPlaylistID  INT OUTPUT
 AS
 BEGIN
