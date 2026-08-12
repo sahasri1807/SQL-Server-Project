@@ -6,4 +6,3 @@ CREATE TABLE music.Artists (
     ArtistName VARCHAR(100) NOT NULL,
     Country VARCHAR(50)
 );
-
