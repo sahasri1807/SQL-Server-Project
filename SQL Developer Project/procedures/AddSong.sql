@@ -5,11 +5,6 @@
   Uses      : Songs, Artists, Albums, Genres (Phase 1 column names)
 ==============================================================================
 */
-CREATE OR ALTER PROCEDURE dbo.AddSong
-    @Title       VARCHAR(100),
-    @Duration    INT,
-    @ArtistID    INT,
-    @AlbumID     INT,
     @GenreID     INT,
     @ReleaseDate DATE = NULL,
     @NewSongID   INT OUTPUT
