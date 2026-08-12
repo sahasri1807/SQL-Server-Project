@@ -5,3 +5,7 @@ CREATE TABLE Albums (
     ReleaseYear INT,
     FOREIGN KEY (ArtistID) REFERENCES Artists(ArtistID)
 );
+
+
+
+
