@@ -1,4 +1,4 @@
-CREATE TABLE Artists (
+CREATE TABLE music.Artists (
     ArtistID INT IDENTITY(1,1) PRIMARY KEY,
     ArtistName VARCHAR(100) NOT NULL,
     Country VARCHAR(50)

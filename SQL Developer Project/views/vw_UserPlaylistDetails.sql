@@ -1,10 +1,10 @@
 /*
 ==============================================================================
-  View : dbo.vw_UserPlaylistDetails
+  View : reports.vw_UserPlaylistDetails
   Purpose : User, playlist, and songs (filter-friendly via UserID / PlaylistID).
 ==============================================================================
 */
-CREATE OR ALTER VIEW dbo.vw_UserPlaylistDetails
+CREATE OR ALTER VIEW reports.vw_UserPlaylistDetails
 AS
 SELECT
     u.UserID,
@@ -16,9 +16,9 @@ SELECT
     s.Title AS SongTitle,
     a.ArtistName,
     ps.AddedAt
-FROM dbo.Playlists AS p
-INNER JOIN dbo.Users AS u ON u.UserID = p.UserID
-LEFT JOIN dbo.PlaylistSongs AS ps ON ps.PlaylistID = p.PlaylistID
-LEFT JOIN dbo.Songs AS s ON s.SongID = ps.SongID
-LEFT JOIN dbo.Artists AS a ON a.ArtistID = s.ArtistID;
+FROM music.Playlists AS p
+INNER JOIN music.Users AS u ON u.UserID = p.UserID
+LEFT JOIN music.PlaylistSongs AS ps ON ps.PlaylistID = p.PlaylistID
+LEFT JOIN music.Songs AS s ON s.SongID = ps.SongID
+LEFT JOIN music.Artists AS a ON a.ArtistID = s.ArtistID;
 GO

@@ -1,4 +1,4 @@
-CREATE TABLE Genres (
+CREATE TABLE music.Genres (
     GenreID INT IDENTITY(1,1) PRIMARY KEY,
     GenreName VARCHAR(50) NOT NULL UNIQUE
 );

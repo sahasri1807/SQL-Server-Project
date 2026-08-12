@@ -1,12 +1,12 @@
 /*
 ==============================================================================
-  Procedure : dbo.SearchSongsDynamic
+  Procedure : app.SearchSongsDynamic
   Purpose   : Search songs with optional Genre / Artist / Title filters using
               dynamic SQL and sp_executesql (parameterized — SQL injection safe).
   Uses      : Songs.Title, Artists.ArtistName, Genres.GenreName, Songs.PlayCount
 ==============================================================================
 */
-CREATE OR ALTER PROCEDURE dbo.SearchSongsDynamic
+CREATE OR ALTER PROCEDURE app.SearchSongsDynamic
     @GenreName  VARCHAR(50)  = NULL,
     @ArtistName VARCHAR(100) = NULL,
     @Title      VARCHAR(100) = NULL
@@ -28,10 +28,10 @@ SELECT
     s.Duration,
     s.PlayCount,
     s.ReleaseDate
-FROM dbo.Songs AS s
-INNER JOIN dbo.Artists AS a ON a.ArtistID = s.ArtistID
-LEFT JOIN dbo.Genres AS g ON g.GenreID = s.GenreID
-LEFT JOIN dbo.Albums AS al ON al.AlbumID = s.AlbumID
+FROM music.Songs AS s
+INNER JOIN music.Artists AS a ON a.ArtistID = s.ArtistID
+LEFT JOIN music.Genres AS g ON g.GenreID = s.GenreID
+LEFT JOIN music.Albums AS al ON al.AlbumID = s.AlbumID
 WHERE 1 = 1';
 
         IF @GenreName IS NOT NULL AND LTRIM(RTRIM(@GenreName)) <> ''

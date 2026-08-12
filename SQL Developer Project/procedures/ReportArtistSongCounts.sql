@@ -1,11 +1,11 @@
 /*
 ==============================================================================
-  Procedure : dbo.ReportArtistSongCounts
+  Procedure : app.ReportArtistSongCounts
   Purpose   : STATIC cursor report — artists and their song counts.
   Cursor    : DECLARE / OPEN / FETCH / WHILE / CLOSE / DEALLOCATE (STATIC)
 ==============================================================================
 */
-CREATE OR ALTER PROCEDURE dbo.ReportArtistSongCounts
+CREATE OR ALTER PROCEDURE app.ReportArtistSongCounts
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -26,8 +26,8 @@ BEGIN
             a.ArtistID,
             a.ArtistName,
             COUNT(s.SongID) AS SongCount
-        FROM dbo.Artists AS a
-        LEFT JOIN dbo.Songs AS s ON s.ArtistID = a.ArtistID
+        FROM music.Artists AS a
+        LEFT JOIN music.Songs AS s ON s.ArtistID = a.ArtistID
         GROUP BY a.ArtistID, a.ArtistName
         ORDER BY COUNT(s.SongID) DESC, a.ArtistName;
 

@@ -5,6 +5,7 @@
   REQUIRED : Query -> SQLCMD Mode  (so :r includes work)
 
   Order:
+    0) Create schemas (music, app, reports, security)
     1) Phase 1 CREATE TABLE scripts
     2) Phase 2 migration + seed + functions/views/procedures/triggers/security
     3) Phase 3 indexes
@@ -16,6 +17,10 @@
 PRINT '========== FINAL SCRIPT START ==========';
 PRINT 'Database: ' + DB_NAME();
 GO
+
+/* -------------------- Create schemas -------------------- */
+PRINT '>>> schema/00_CreateSchemas.sql';
+:r schema/00_CreateSchemas.sql
 
 /* -------------------- Phase 1 schema -------------------- */
 PRINT '>>> schema/Roles.sql';

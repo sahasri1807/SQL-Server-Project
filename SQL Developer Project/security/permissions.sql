@@ -31,82 +31,84 @@ GO
 /* --------------------------------------------------------------------------
    MusicAdmin — full control over music objects
    -------------------------------------------------------------------------- */
-GRANT SELECT, INSERT, UPDATE, DELETE ON SCHEMA::dbo TO MusicAdmin;
-GRANT EXECUTE ON SCHEMA::dbo TO MusicAdmin;
+GRANT SELECT, INSERT, UPDATE, DELETE ON SCHEMA::music TO MusicAdmin;
+GRANT EXECUTE ON SCHEMA::app TO MusicAdmin;
+GRANT SELECT ON SCHEMA::reports TO MusicAdmin;
 GO
 
 /* --------------------------------------------------------------------------
    MusicUser — listen, manage own playlists, read catalog
    -------------------------------------------------------------------------- */
-GRANT SELECT ON dbo.Songs TO MusicUser;
-GRANT SELECT ON dbo.Artists TO MusicUser;
-GRANT SELECT ON dbo.Albums TO MusicUser;
-GRANT SELECT ON dbo.Genres TO MusicUser;
-GRANT SELECT ON dbo.Playlists TO MusicUser;
-GRANT SELECT ON dbo.PlaylistSongs TO MusicUser;
-GRANT SELECT ON dbo.ListeningHistory TO MusicUser;
-GRANT SELECT ON dbo.Subscriptions TO MusicUser;
-GRANT SELECT ON dbo.vw_UserListeningHistory TO MusicUser;
-GRANT SELECT ON dbo.vw_SongDetails TO MusicUser;
-GRANT SELECT ON dbo.vw_UserPlaylistDetails TO MusicUser;
+GRANT SELECT ON music.Songs TO MusicUser;
+GRANT SELECT ON music.Artists TO MusicUser;
+GRANT SELECT ON music.Albums TO MusicUser;
+GRANT SELECT ON music.Genres TO MusicUser;
+GRANT SELECT ON music.Playlists TO MusicUser;
+GRANT SELECT ON music.PlaylistSongs TO MusicUser;
+GRANT SELECT ON music.ListeningHistory TO MusicUser;
+GRANT SELECT ON music.Subscriptions TO MusicUser;
+GRANT SELECT ON reports.vw_UserListeningHistory TO MusicUser;
+GRANT SELECT ON reports.vw_SongDetails TO MusicUser;
+GRANT SELECT ON reports.vw_UserPlaylistDetails TO MusicUser;
 
-GRANT INSERT, UPDATE ON dbo.Playlists TO MusicUser;
-GRANT INSERT, DELETE ON dbo.PlaylistSongs TO MusicUser;
-GRANT INSERT ON dbo.ListeningHistory TO MusicUser;
+GRANT INSERT, UPDATE ON music.Playlists TO MusicUser;
+GRANT INSERT, DELETE ON music.PlaylistSongs TO MusicUser;
+GRANT INSERT ON music.ListeningHistory TO MusicUser;
 
-GRANT EXECUTE ON dbo.CreatePlaylist TO MusicUser;
-GRANT EXECUTE ON dbo.AddSongToPlaylist TO MusicUser;
-GRANT EXECUTE ON dbo.SearchSongsDynamic TO MusicUser;
-GRANT EXECUTE ON dbo.ManageSubscription TO MusicUser;
-GRANT EXECUTE ON dbo.GetSongPlayCount TO MusicUser;
-GRANT SELECT ON dbo.GetUserSubscriptionStatus TO MusicUser;
+GRANT EXECUTE ON app.CreatePlaylist TO MusicUser;
+GRANT EXECUTE ON app.AddSongToPlaylist TO MusicUser;
+GRANT EXECUTE ON app.SearchSongsDynamic TO MusicUser;
+GRANT EXECUTE ON app.ManageSubscription TO MusicUser;
+GRANT EXECUTE ON app.GetSongPlayCount TO MusicUser;
+GRANT SELECT ON app.GetUserSubscriptionStatus TO MusicUser;
 
 /* Users cannot manage other users or drop songs */
-DENY INSERT, UPDATE, DELETE ON dbo.Users TO MusicUser;
-DENY DELETE ON dbo.Songs TO MusicUser;
-DENY EXECUTE ON dbo.AddNewUser TO MusicUser;
-DENY EXECUTE ON dbo.AddSong TO MusicUser;
+DENY INSERT, UPDATE, DELETE ON music.Users TO MusicUser;
+DENY DELETE ON music.Songs TO MusicUser;
+DENY EXECUTE ON app.AddNewUser TO MusicUser;
+DENY EXECUTE ON app.AddSong TO MusicUser;
 GO
 
 /* --------------------------------------------------------------------------
    MusicArtist — upload songs, manage artist catalog read/write
    -------------------------------------------------------------------------- */
-GRANT SELECT ON dbo.Songs TO MusicArtist;
-GRANT SELECT ON dbo.Artists TO MusicArtist;
-GRANT SELECT ON dbo.Albums TO MusicArtist;
-GRANT SELECT ON dbo.Genres TO MusicArtist;
-GRANT SELECT ON dbo.vw_SongDetails TO MusicArtist;
+GRANT SELECT ON music.Songs TO MusicArtist;
+GRANT SELECT ON music.Artists TO MusicArtist;
+GRANT SELECT ON music.Albums TO MusicArtist;
+GRANT SELECT ON music.Genres TO MusicArtist;
+GRANT SELECT ON reports.vw_SongDetails TO MusicArtist;
 
-GRANT INSERT, UPDATE ON dbo.Songs TO MusicArtist;
-GRANT INSERT, UPDATE ON dbo.Albums TO MusicArtist;
-GRANT EXECUTE ON dbo.AddSong TO MusicArtist;
-GRANT EXECUTE ON dbo.SearchSongsDynamic TO MusicArtist;
-GRANT EXECUTE ON dbo.GetSongPlayCount TO MusicArtist;
-IF OBJECT_ID(N'dbo.ReportArtistSongCounts', N'P') IS NOT NULL
-    GRANT EXECUTE ON dbo.ReportArtistSongCounts TO MusicArtist;
+GRANT INSERT, UPDATE ON music.Songs TO MusicArtist;
+GRANT INSERT, UPDATE ON music.Albums TO MusicArtist;
+GRANT EXECUTE ON app.AddSong TO MusicArtist;
+GRANT EXECUTE ON app.SearchSongsDynamic TO MusicArtist;
+GRANT EXECUTE ON app.GetSongPlayCount TO MusicArtist;
+IF OBJECT_ID(N'app.ReportArtistSongCounts', N'P') IS NOT NULL
+    GRANT EXECUTE ON app.ReportArtistSongCounts TO MusicArtist;
 
-DENY DELETE ON dbo.ListeningHistory TO MusicArtist;
-DENY EXECUTE ON dbo.AddNewUser TO MusicArtist;
-DENY EXECUTE ON dbo.ManageSubscription TO MusicArtist;
+DENY DELETE ON music.ListeningHistory TO MusicArtist;
+DENY EXECUTE ON app.AddNewUser TO MusicArtist;
+DENY EXECUTE ON app.ManageSubscription TO MusicArtist;
 GO
 
 /* --------------------------------------------------------------------------
    MusicModerator — review/moderate content; limited admin
    -------------------------------------------------------------------------- */
-GRANT SELECT ON SCHEMA::dbo TO MusicModerator;
-GRANT UPDATE ON dbo.Songs TO MusicModerator;
-GRANT UPDATE ON dbo.Users TO MusicModerator;
-GRANT DELETE ON dbo.PlaylistSongs TO MusicModerator;
-GRANT EXECUTE ON dbo.SearchSongsDynamic TO MusicModerator;
-IF OBJECT_ID(N'dbo.ReportArtistSongCounts', N'P') IS NOT NULL
-    GRANT EXECUTE ON dbo.ReportArtistSongCounts TO MusicModerator;
-IF OBJECT_ID(N'dbo.ProcessSongsDynamicCursor', N'P') IS NOT NULL
-    GRANT EXECUTE ON dbo.ProcessSongsDynamicCursor TO MusicModerator;
-GRANT EXECUTE ON dbo.GetSongPlayCount TO MusicModerator;
+GRANT SELECT ON SCHEMA::music TO MusicModerator;
+GRANT SELECT ON SCHEMA::reports TO MusicModerator;
+GRANT UPDATE ON music.Songs TO MusicModerator;
+GRANT UPDATE ON music.Users TO MusicModerator;
+GRANT DELETE ON music.PlaylistSongs TO MusicModerator;
+GRANT EXECUTE ON app.SearchSongsDynamic TO MusicModerator;
+IF OBJECT_ID(N'app.ReportArtistSongCounts', N'P') IS NOT NULL
+    GRANT EXECUTE ON app.ReportArtistSongCounts TO MusicModerator;
+IF OBJECT_ID(N'app.ProcessSongsDynamicCursor', N'P') IS NOT NULL
+    GRANT EXECUTE ON app.ProcessSongsDynamicCursor TO MusicModerator;
+GRANT EXECUTE ON app.GetSongPlayCount TO MusicModerator;
 
-DENY EXECUTE ON dbo.AddNewUser TO MusicModerator;
-DENY DELETE ON dbo.Users TO MusicModerator;
-REVOKE INSERT ON dbo.Subscriptions TO MusicModerator; -- ensure no insert unless granted
+DENY EXECUTE ON app.AddNewUser TO MusicModerator;
+DENY DELETE ON music.Users TO MusicModerator;
+REVOKE INSERT ON music.Subscriptions TO MusicModerator; -- ensure no insert unless granted
 GO
 
 PRINT 'Database roles and permissions applied.';
@@ -154,14 +156,14 @@ GO
 
 -- ---- MusicAdmin test (expect SUCCESS) ----
 EXECUTE AS USER = 'test_music_admin';
-SELECT TOP 1 * FROM dbo.Songs;
+SELECT TOP 1 * FROM music.Songs;
 REVERT;
 GO
 
 -- ---- MusicUser test (expect FAIL on AddSong / DELETE Songs) ----
 EXECUTE AS USER = 'test_music_user';
 BEGIN TRY
-    EXEC dbo.SearchSongsDynamic @Title = N'a';  -- should succeed
+    EXEC app.SearchSongsDynamic @Title = N'a';  -- should succeed
     PRINT 'MusicUser SearchSongsDynamic: OK';
 END TRY
 BEGIN CATCH
@@ -170,7 +172,7 @@ END CATCH
 
 BEGIN TRY
     DECLARE @id INT;
-    EXEC dbo.AddSong @Title='X', @Duration=1, @ArtistID=1, @AlbumID=1, @GenreID=1, @NewSongID=@id OUTPUT;
+    EXEC app.AddSong @Title='X', @Duration=1, @ArtistID=1, @AlbumID=1, @GenreID=1, @NewSongID=@id OUTPUT;
     PRINT 'MusicUser AddSong unexpectedly succeeded';
 END TRY
 BEGIN CATCH
@@ -181,7 +183,7 @@ GO
 
 -- ---- MusicArtist test (expect SUCCESS on AddSong if FKs valid) ----
 EXECUTE AS USER = 'test_music_artist';
-SELECT TOP 1 SongID FROM dbo.Songs;
+SELECT TOP 1 SongID FROM music.Songs;
 REVERT;
 GO
 
@@ -189,7 +191,7 @@ GO
 EXECUTE AS USER = 'test_music_mod';
 BEGIN TRY
     DECLARE @uid INT;
-    EXEC dbo.AddNewUser @FullName='Hack', @Email='hack@example.com', @NewUserID=@uid OUTPUT;
+    EXEC app.AddNewUser @FullName='Hack', @Email='hack@example.com', @NewUserID=@uid OUTPUT;
     PRINT 'MusicModerator AddNewUser unexpectedly succeeded';
 END TRY
 BEGIN CATCH

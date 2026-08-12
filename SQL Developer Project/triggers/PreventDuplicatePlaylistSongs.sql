@@ -1,14 +1,14 @@
 /*
 ==============================================================================
-  Trigger : dbo.trg_PreventDuplicatePlaylistSongs
-  Table   : dbo.PlaylistSongs
+  Trigger : music.trg_PreventDuplicatePlaylistSongs
+  Table   : music.PlaylistSongs
   Type    : INSTEAD OF INSERT
   Purpose : Friendly rejection of duplicate (PlaylistID, SongID) pairs.
             Phase 1 already has composite PK; this adds explicit messaging.
 ==============================================================================
 */
-CREATE OR ALTER TRIGGER dbo.trg_PreventDuplicatePlaylistSongs
-ON dbo.PlaylistSongs
+CREATE OR ALTER TRIGGER music.trg_PreventDuplicatePlaylistSongs
+ON music.PlaylistSongs
 INSTEAD OF INSERT
 AS
 BEGIN
@@ -17,7 +17,7 @@ BEGIN
     IF EXISTS (
         SELECT 1
         FROM inserted AS i
-        INNER JOIN dbo.PlaylistSongs AS ps
+        INNER JOIN music.PlaylistSongs AS ps
             ON ps.PlaylistID = i.PlaylistID
            AND ps.SongID = i.SongID
     )
@@ -38,7 +38,7 @@ BEGIN
         RETURN;
     END
 
-    INSERT INTO dbo.PlaylistSongs (PlaylistID, SongID, AddedAt)
+    INSERT INTO music.PlaylistSongs (PlaylistID, SongID, AddedAt)
     SELECT
         i.PlaylistID,
         i.SongID,

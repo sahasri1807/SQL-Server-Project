@@ -28,10 +28,10 @@ SELECT
     s.Duration,
     s.PlayCount,
     s.ReleaseDate
-FROM dbo.Songs AS s
+FROM music.Songs AS s
 WHERE s.ArtistID = (
     SELECT TOP 1 ArtistID
-    FROM dbo.Artists
+    FROM music.Artists
     ORDER BY ArtistID
 );
 
@@ -55,10 +55,10 @@ SELECT
     lh.UserID,
     lh.SongID,
     lh.PlayedAt
-FROM dbo.ListeningHistory AS lh
+FROM music.ListeningHistory AS lh
 WHERE lh.UserID = (
     SELECT TOP 1 UserID
-    FROM dbo.Users
+    FROM music.Users
     ORDER BY UserID
 );
 
@@ -82,7 +82,7 @@ SELECT
     s.Title,
     s.ArtistID,
     s.PlayCount
-FROM dbo.Songs AS s
+FROM music.Songs AS s
 WHERE s.PlayCount > 0
 ORDER BY s.PlayCount DESC;
 

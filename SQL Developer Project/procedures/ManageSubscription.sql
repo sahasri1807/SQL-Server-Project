@@ -1,6 +1,6 @@
 /*
 ==============================================================================
-  Procedure : dbo.ManageSubscription
+  Procedure : app.ManageSubscription
   Purpose   : Upgrade/change a user's subscription and update user Status
               inside a single transaction.
   Uses      : Subscriptions (Type, Price, StartDate, EndDate, UserID),
@@ -8,7 +8,7 @@
   Note      : Requires migrations/001_Phase2_SchemaExtensions.sql
 ==============================================================================
 */
-CREATE OR ALTER PROCEDURE dbo.ManageSubscription
+CREATE OR ALTER PROCEDURE app.ManageSubscription
     @UserID           INT,
     @SubscriptionType VARCHAR(50),
     @Price            DECIMAL(10,2),
@@ -25,7 +25,7 @@ BEGIN
     DECLARE @NewStatus VARCHAR(20);
 
     BEGIN TRY
-        IF @UserID IS NULL OR NOT EXISTS (SELECT 1 FROM dbo.Users WHERE UserID = @UserID)
+        IF @UserID IS NULL OR NOT EXISTS (SELECT 1 FROM music.Users WHERE UserID = @UserID)
             THROW 50041, 'UserID does not exist.', 1;
 
         IF @SubscriptionType IS NULL OR LTRIM(RTRIM(@SubscriptionType)) = ''
@@ -49,17 +49,17 @@ BEGIN
         BEGIN TRANSACTION;
 
         /* Close any open subscription for this user */
-        UPDATE dbo.Subscriptions
+        UPDATE music.Subscriptions
         SET EndDate = DATEADD(DAY, -1, @StartDate)
         WHERE UserID = @UserID
           AND (EndDate IS NULL OR EndDate >= @StartDate);
 
-        INSERT INTO dbo.Subscriptions (Type, Price, StartDate, EndDate, UserID)
+        INSERT INTO music.Subscriptions (Type, Price, StartDate, EndDate, UserID)
         VALUES (@SubscriptionType, @Price, @StartDate, @EndDate, @UserID);
 
         SET @NewSubscriptionID = SCOPE_IDENTITY();
 
-        UPDATE dbo.Users
+        UPDATE music.Users
         SET Status = @NewStatus
         WHERE UserID = @UserID;
 

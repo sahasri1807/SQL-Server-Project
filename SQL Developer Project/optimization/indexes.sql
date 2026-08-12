@@ -19,11 +19,11 @@ IF NOT EXISTS (
     SELECT 1
     FROM sys.indexes
     WHERE name = 'IX_Songs_ArtistID'
-      AND object_id = OBJECT_ID('dbo.Songs')
+      AND object_id = OBJECT_ID('music.Songs')
 )
 BEGIN
     CREATE NONCLUSTERED INDEX IX_Songs_ArtistID
-    ON dbo.Songs (ArtistID)
+    ON music.Songs (ArtistID)
     INCLUDE (Title, GenreID, AlbumID, Duration, PlayCount, ReleaseDate);
 
     PRINT 'Created IX_Songs_ArtistID.';
@@ -43,11 +43,11 @@ IF NOT EXISTS (
     SELECT 1
     FROM sys.indexes
     WHERE name = 'IX_ListeningHistory_UserID_Include'
-      AND object_id = OBJECT_ID('dbo.ListeningHistory')
+      AND object_id = OBJECT_ID('music.ListeningHistory')
 )
 BEGIN
     CREATE NONCLUSTERED INDEX IX_ListeningHistory_UserID_Include
-    ON dbo.ListeningHistory (UserID)
+    ON music.ListeningHistory (UserID)
     INCLUDE (SongID, PlayedAt);
 
     PRINT 'Created IX_ListeningHistory_UserID_Include.';
@@ -66,11 +66,11 @@ IF NOT EXISTS (
     SELECT 1
     FROM sys.indexes
     WHERE name = 'IX_Songs_PlayCount_Filtered'
-      AND object_id = OBJECT_ID('dbo.Songs')
+      AND object_id = OBJECT_ID('music.Songs')
 )
 BEGIN
     CREATE NONCLUSTERED INDEX IX_Songs_PlayCount_Filtered
-    ON dbo.Songs (PlayCount)
+    ON music.Songs (PlayCount)
     INCLUDE (Title, ArtistID)
     WHERE PlayCount > 0;
 

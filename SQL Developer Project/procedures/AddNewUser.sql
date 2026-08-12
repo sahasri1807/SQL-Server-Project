@@ -1,11 +1,11 @@
 /*
 ==============================================================================
-  Procedure : dbo.AddNewUser
+  Procedure : app.AddNewUser
   Purpose   : Insert a new user with unique email and default application role.
   Uses      : Users (FullName, Email, RoleID, Status), Roles (RoleName)
 ==============================================================================
 */
-CREATE OR ALTER PROCEDURE dbo.AddNewUser
+CREATE OR ALTER PROCEDURE app.AddNewUser
     @FullName   VARCHAR(100),
     @Email      VARCHAR(100),
     @RoleName   VARCHAR(50) = 'User',   -- default application role from Roles
@@ -29,11 +29,11 @@ BEGIN
         IF @Email NOT LIKE '%_@_%.__%'
             THROW 50003, 'Email format is invalid.', 1;
 
-        IF EXISTS (SELECT 1 FROM dbo.Users WHERE Email = @Email)
+        IF EXISTS (SELECT 1 FROM music.Users WHERE Email = @Email)
             THROW 50004, 'Email already exists. User not created.', 1;
 
         SELECT @RoleID = RoleID
-        FROM dbo.Roles
+        FROM music.Roles
         WHERE RoleName = @RoleName;
 
         IF @RoleID IS NULL
@@ -41,7 +41,7 @@ BEGIN
 
         BEGIN TRANSACTION;
 
-        INSERT INTO dbo.Users (FullName, Email, RoleID, Status)
+        INSERT INTO music.Users (FullName, Email, RoleID, Status)
         VALUES (@FullName, @Email, @RoleID, 'Active');
 
         SET @NewUserID = SCOPE_IDENTITY();

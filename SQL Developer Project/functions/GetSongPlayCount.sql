@@ -1,6 +1,6 @@
 /*
 ==============================================================================
-  Function  : dbo.GetSongPlayCount
+  Function  : app.GetSongPlayCount
   Type      : Scalar function
   Purpose   : Return play count for a song.
   Source    : Songs.PlayCount (Phase 1 column exists; also kept in sync by
@@ -8,7 +8,7 @@
               available as a cross-check via optional comment below.
 ==============================================================================
 */ 
-CREATE OR ALTER FUNCTION dbo.GetSongPlayCount
+CREATE OR ALTER FUNCTION app.GetSongPlayCount
 (
     @SongID INT
 )
@@ -18,7 +18,7 @@ BEGIN
     DECLARE @PlayCount INT;
 
     SELECT @PlayCount = PlayCount
-    FROM dbo.Songs
+    FROM music.Songs
     WHERE SongID = @SongID;
 
     /* If song does not exist, return NULL; otherwise return stored PlayCount */

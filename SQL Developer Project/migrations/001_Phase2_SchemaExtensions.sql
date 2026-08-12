@@ -14,9 +14,9 @@ GO
 /* --------------------------------------------------------------------------
    1) Users.Status — used by CreatePlaylist (active user) and ManageSubscription
    -------------------------------------------------------------------------- */
-IF COL_LENGTH('dbo.Users', 'Status') IS NULL
+IF COL_LENGTH('music.Users', 'Status') IS NULL
 BEGIN
-    ALTER TABLE dbo.Users
+    ALTER TABLE music.Users
         ADD Status VARCHAR(20) NOT NULL
             CONSTRAINT DF_Users_Status DEFAULT ('Active');
     PRINT 'Added Users.Status (default Active).';
@@ -29,9 +29,9 @@ GO
    2) Subscriptions.UserID — links a subscription row to a user
    Phase 1 Subscriptions columns: SubscriptionID, Type, Price, StartDate, EndDate
    -------------------------------------------------------------------------- */
-IF COL_LENGTH('dbo.Subscriptions', 'UserID') IS NULL
+IF COL_LENGTH('music.Subscriptions', 'UserID') IS NULL
 BEGIN
-    ALTER TABLE dbo.Subscriptions
+    ALTER TABLE music.Subscriptions
         ADD UserID INT NULL;
     PRINT 'Added Subscriptions.UserID (nullable pending FK).';
 END
@@ -43,12 +43,12 @@ IF NOT EXISTS (
     SELECT 1
     FROM sys.foreign_keys
     WHERE name = 'FK_Subscriptions_Users'
-      AND parent_object_id = OBJECT_ID('dbo.Subscriptions')
+      AND parent_object_id = OBJECT_ID('music.Subscriptions')
 )
 BEGIN
-    ALTER TABLE dbo.Subscriptions
+    ALTER TABLE music.Subscriptions
         ADD CONSTRAINT FK_Subscriptions_Users
-        FOREIGN KEY (UserID) REFERENCES dbo.Users(UserID);
+        FOREIGN KEY (UserID) REFERENCES music.Users(UserID);
     PRINT 'Added FK_Subscriptions_Users.';
 END
 ELSE

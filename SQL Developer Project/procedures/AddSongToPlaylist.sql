@@ -1,11 +1,11 @@
 /*
 ==============================================================================
-  Procedure : dbo.AddSongToPlaylist
+  Procedure : app.AddSongToPlaylist
   Purpose   : Add a song to a playlist; prevent duplicates; transactional.
   Uses      : PlaylistSongs (PlaylistID, SongID), Playlists, Songs
 ==============================================================================
 */
-CREATE OR ALTER PROCEDURE dbo.AddSongToPlaylist
+CREATE OR ALTER PROCEDURE app.AddSongToPlaylist
     @PlaylistID INT,
     @SongID     INT
 AS
@@ -16,15 +16,15 @@ BEGIN
     DECLARE @ErrorMessage NVARCHAR(4000);
 
     BEGIN TRY
-        IF @PlaylistID IS NULL OR NOT EXISTS (SELECT 1 FROM dbo.Playlists WHERE PlaylistID = @PlaylistID)
+        IF @PlaylistID IS NULL OR NOT EXISTS (SELECT 1 FROM music.Playlists WHERE PlaylistID = @PlaylistID)
             THROW 50031, 'PlaylistID does not exist.', 1;
 
-        IF @SongID IS NULL OR NOT EXISTS (SELECT 1 FROM dbo.Songs WHERE SongID = @SongID)
+        IF @SongID IS NULL OR NOT EXISTS (SELECT 1 FROM music.Songs WHERE SongID = @SongID)
             THROW 50032, 'SongID does not exist.', 1;
 
         IF EXISTS (
             SELECT 1
-            FROM dbo.PlaylistSongs
+            FROM music.PlaylistSongs
             WHERE PlaylistID = @PlaylistID
               AND SongID = @SongID
         )
@@ -32,7 +32,7 @@ BEGIN
 
         BEGIN TRANSACTION;
 
-        INSERT INTO dbo.PlaylistSongs (PlaylistID, SongID)
+        INSERT INTO music.PlaylistSongs (PlaylistID, SongID)
         VALUES (@PlaylistID, @SongID);
 
         COMMIT TRANSACTION;

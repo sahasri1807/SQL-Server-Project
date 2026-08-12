@@ -144,12 +144,12 @@ Covers successful transactions, failed ROLLBACK, duplicate playlist song, invali
 
 ### Quick smoke checks after deploy
 ```sql
-EXEC dbo.SearchSongsDynamic @GenreName = 'Pop';
-EXEC dbo.ReportArtistSongCounts;
-EXEC dbo.ProcessSongsDynamicCursor @MinPlayCount = 0;
-SELECT * FROM dbo.vw_SongDetails;
-SELECT dbo.GetSongPlayCount(1);
-SELECT * FROM dbo.GetUserSubscriptionStatus(1);
+EXEC app.SearchSongsDynamic @GenreName = 'Pop';
+EXEC app.ReportArtistSongCounts;
+EXEC app.ProcessSongsDynamicCursor @MinPlayCount = 0;
+SELECT * FROM reports.vw_SongDetails;
+SELECT app.GetSongPlayCount(1);
+SELECT * FROM app.GetUserSubscriptionStatus(1);
 ```
 
 ---

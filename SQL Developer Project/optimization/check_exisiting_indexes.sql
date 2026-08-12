@@ -16,14 +16,14 @@ WHERE t.is_ms_shipped = 0
 ORDER BY t.name, i.index_id;
 GO
 
-EXEC sp_helpindex 'dbo.Songs';
+EXEC sp_helpindex 'music.Songs';
 GO
 
-EXEC sp_helpindex 'dbo.ListeningHistory';
+EXEC sp_helpindex 'music.ListeningHistory';
 GO
 
-EXEC sp_helpindex 'dbo.PlaylistSongs';
+EXEC sp_helpindex 'music.PlaylistSongs';
 GO
 
-EXEC sp_helpindex 'dbo.Subscriptions';
+EXEC sp_helpindex 'music.Subscriptions';
 GO

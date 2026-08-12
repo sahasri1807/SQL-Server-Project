@@ -1,12 +1,12 @@
 /*
 ==============================================================================
-  Procedure : dbo.ProcessSongsDynamicCursor
+  Procedure : app.ProcessSongsDynamicCursor
   Purpose   : DYNAMIC cursor that walks Songs and builds table/column info
               via dynamic SQL (sp_executesql) for each processed song row.
   Cursor    : DECLARE / OPEN / FETCH / WHILE / CLOSE / DEALLOCATE (DYNAMIC)
 ==============================================================================
 */
-CREATE OR ALTER PROCEDURE dbo.ProcessSongsDynamicCursor
+CREATE OR ALTER PROCEDURE app.ProcessSongsDynamicCursor
     @MinPlayCount INT = 0
 AS
 BEGIN
@@ -28,7 +28,7 @@ BEGIN
     /* DYNAMIC cursor — reflects committed changes made during the loop */
     DECLARE song_cursor CURSOR DYNAMIC LOCAL FOR
         SELECT SongID, Title, PlayCount
-        FROM dbo.Songs
+        FROM music.Songs
         WHERE PlayCount >= @MinPlayCount
         ORDER BY SongID;
 
@@ -46,7 +46,7 @@ SELECT @out = CONCAT(
     ''; Cols='', CAST(COUNT(*) AS VARCHAR(20)),
     ''; Table=Songs'')
 FROM sys.columns
-WHERE object_id = OBJECT_ID(''dbo.Songs'');';
+WHERE object_id = OBJECT_ID(''music.Songs'');';
 
             EXEC sys.sp_executesql
                 @SQL,

@@ -1,6 +1,6 @@
 /*
 ==============================================================================
-  Function  : dbo.GetUserSubscriptionStatus
+  Function  : app.GetUserSubscriptionStatus
   Type      : Multi-statement table-valued function (SQL Server 2016 compatible)
   Purpose   : Return current subscription type/status for a user.
   Uses      : Subscriptions (UserID, Type, Price, StartDate, EndDate),
@@ -8,7 +8,7 @@
   Note      : Requires migrations/001_Phase2_SchemaExtensions.sql
 ==============================================================================
 */ 
-CREATE OR ALTER FUNCTION dbo.GetUserSubscriptionStatus
+CREATE OR ALTER FUNCTION app.GetUserSubscriptionStatus
 (
     @UserID INT
 )
@@ -44,8 +44,8 @@ BEGIN
             WHEN s.EndDate IS NULL OR s.EndDate >= CAST(GETDATE() AS DATE) THEN 'Current'
             ELSE 'Expired'
         END
-    FROM dbo.Users AS u
-    LEFT JOIN dbo.Subscriptions AS s
+    FROM music.Users AS u
+    LEFT JOIN music.Subscriptions AS s
         ON s.UserID = u.UserID
     WHERE u.UserID = @UserID
     ORDER BY

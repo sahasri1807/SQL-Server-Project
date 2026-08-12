@@ -21,7 +21,7 @@ GO
 SET SHOWPLAN_TEXT ON;
 GO
 SELECT s.SongID, s.Title, s.GenreID, s.AlbumID, s.Duration, s.PlayCount, s.ReleaseDate
-FROM dbo.Songs AS s
+FROM music.Songs AS s
 WHERE s.ArtistID = 1;
 GO
 SET SHOWPLAN_TEXT OFF;
@@ -32,7 +32,7 @@ GO
 SET SHOWPLAN_TEXT ON;
 GO
 SELECT lh.HistoryID, lh.UserID, lh.SongID, lh.PlayedAt
-FROM dbo.ListeningHistory AS lh
+FROM music.ListeningHistory AS lh
 WHERE lh.UserID = 1;
 GO
 SET SHOWPLAN_TEXT OFF;
@@ -43,7 +43,7 @@ GO
 SET SHOWPLAN_TEXT ON;
 GO
 SELECT s.SongID, s.Title, s.ArtistID, s.PlayCount
-FROM dbo.Songs AS s
+FROM music.Songs AS s
 WHERE s.PlayCount > 0
 ORDER BY s.PlayCount DESC;
 GO

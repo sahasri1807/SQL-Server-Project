@@ -1,8 +1,8 @@
-CREATE TABLE Users (
+CREATE TABLE music.Users (
     UserID INT IDENTITY(1,1) PRIMARY KEY,
     FullName VARCHAR(100),
     Email VARCHAR(100) UNIQUE NOT NULL,
     RoleID INT,
     CreatedAt DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (RoleID) REFERENCES Roles(RoleID)
+    FOREIGN KEY (RoleID) REFERENCES music.Roles(RoleID)
 );

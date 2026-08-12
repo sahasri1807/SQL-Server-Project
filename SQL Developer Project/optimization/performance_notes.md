@@ -44,7 +44,7 @@ Three additional indexes were created.
 
 Type: Non-clustered index
 
-Table: dbo.Songs
+Table: music.Songs
 
 Key column:
 
@@ -71,7 +71,7 @@ returned directly from the index.
 
 Type: Non-clustered INCLUDE index
 
-Table: dbo.ListeningHistory
+Table: music.ListeningHistory
 
 Key column:
 
@@ -94,7 +94,7 @@ information without unnecessary additional lookups.
 
 Type: Filtered non-clustered index
 
-Table: dbo.Songs
+Table: music.Songs
 
 Key column:
 

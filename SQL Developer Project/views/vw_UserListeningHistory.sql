@@ -1,11 +1,11 @@
 /*
 ==============================================================================
-  View : dbo.vw_UserListeningHistory
+  View : reports.vw_UserListeningHistory
   Purpose : User name, song title, artist, date played.
   Columns include UserID for row-level / filtered access patterns.
 ==============================================================================
 */
-CREATE OR ALTER VIEW dbo.vw_UserListeningHistory
+CREATE OR ALTER VIEW reports.vw_UserListeningHistory
 AS
 SELECT
     lh.HistoryID,
@@ -15,8 +15,8 @@ SELECT
     s.Title AS SongTitle,
     a.ArtistName,
     lh.PlayedAt
-FROM dbo.ListeningHistory AS lh
-INNER JOIN dbo.Users AS u ON u.UserID = lh.UserID
-INNER JOIN dbo.Songs AS s ON s.SongID = lh.SongID
-LEFT JOIN dbo.Artists AS a ON a.ArtistID = s.ArtistID;
+FROM music.ListeningHistory AS lh
+INNER JOIN music.Users AS u ON u.UserID = lh.UserID
+INNER JOIN music.Songs AS s ON s.SongID = lh.SongID
+LEFT JOIN music.Artists AS a ON a.ArtistID = s.ArtistID;
 GO

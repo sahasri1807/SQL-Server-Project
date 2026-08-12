@@ -1,11 +1,11 @@
 /*
 ==============================================================================
-  Procedure : dbo.CreatePlaylist
+  Procedure : app.CreatePlaylist
   Purpose   : Create a playlist for an active user.
   Uses      : Playlists (UserID, PlaylistName), Users (Status)
 ==============================================================================
 */
-CREATE OR ALTER PROCEDURE dbo.CreatePlaylist
+CREATE OR ALTER PROCEDURE app.CreatePlaylist
     @UserID         INT,
     @PlaylistName   VARCHAR(100),
     @NewPlaylistID  INT OUTPUT
@@ -25,7 +25,7 @@ BEGIN
             THROW 50022, 'PlaylistName is required.', 1;
 
         SELECT @UserStatus = Status
-        FROM dbo.Users
+        FROM music.Users
         WHERE UserID = @UserID;
 
         IF @UserStatus IS NULL
@@ -36,7 +36,7 @@ BEGIN
 
         BEGIN TRANSACTION;
 
-        INSERT INTO dbo.Playlists (UserID, PlaylistName)
+        INSERT INTO music.Playlists (UserID, PlaylistName)
         VALUES (@UserID, @PlaylistName);
 
         SET @NewPlaylistID = SCOPE_IDENTITY();
