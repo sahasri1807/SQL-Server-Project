@@ -24,6 +24,17 @@ The system includes the following core modules:
 
 ---
 
+## Team members
+
+| Name | Student # | GitHub username | Main code contributions |
+|------|-----------|-----------------|-------------------------|
+| Nunemuntala Sahasri | N10010782 | [sahasri1807] | views/, triggers/, migrations/, security/, test_cases/, optimization/, deploy scripts |
+| Kelvin Idoko | N01777723 | [KelvinIdoko] | schema/Roles.sql, Users.sql, Artists.sql, procedures/ |
+| Hassana Abdullahi | N10000326 | [hafsatuhassana] | schema/ (Albums→Subscriptions), seed/test_data, functions/, views/ |
+
+**Collaboration:** `ER Diagram.png` and `Course Specific Phase 1.pdf` were produced together by all three members.
+
+--- 
 ##  Schema Overview (Phase 1 — actual columns)
 
 The database is normalized to **Third Normal Form (3NF)** and includes:
@@ -53,6 +64,13 @@ Phase 1 `CREATE TABLE` scripts live in `schema/`.
 - **Songs.PlayCount already exists** — `trg_LogStreamingActivity` increments it on `ListeningHistory` INSERT; `GetSongPlayCount` reads `Songs.PlayCount` (not a derived COUNT).
 - **Subscriptions had no UserID** and **Users had no Status** — required for `ManageSubscription`, `CreatePlaylist` (active user), and `GetUserSubscriptionStatus`. Minimal idempotent migration: `migrations/001_Phase2_SchemaExtensions.sql` (adds `Users.Status`, `Subscriptions.UserID` + FK). No new tables invented.
 
+## Phase 3 optimization
+
+Indexes in `optimization/indexes.sql`: PK clustered defaults; `IX_Songs_ArtistID` (NC+INCLUDE); `IX_ListeningHistory_UserID_Include`; `IX_Songs_PlayCount_Filtered`
+
+Also: `performance_test.sql` (STATISTICS), `execution_plans.sql` (SHOWPLAN_TEXT), `performance_notes.md`, `check_exisiting_indexes.sql`, `test_data.sql`
+
+
 ### Folder structure
 ```
 SQL Developer Project/
@@ -62,19 +80,12 @@ SQL Developer Project/
   functions/              -- UDFs
   views/                  -- reporting / filter-friendly views
   triggers/               -- DML triggers
-  security/permissions.sql
-  test_cases/transaction_tests.sql
-  deploy_phase2.sql       -- execution order checklist
-  deploy_phase2_all.sql   -- one-shot concatenated deploy
+  security/               -- permissions
+  test_cases/             -- test_cases.sql + test_data.sql
+  optimization/           -- indexes + query optimization + performance tests
+  deploy_final.sql        -- complete Phase 1 + Phase 2 + Phase 3 deployment
 
 ```
-
-## Phase 3 optimization
-
-Indexes in `optimization/indexes.sql`: PK clustered defaults; `IX_Songs_ArtistID` (NC+INCLUDE); `IX_ListeningHistory_UserID_Include`; `IX_Songs_PlayCount_Filtered`
-
-Also: `performance_test.sql` (STATISTICS), `execution_plans.sql` (SHOWPLAN_TEXT), `performance_notes.md`, `check_exisiting_indexes.sql`, `test_data.sql`
-
 
 ### Objects delivered
 
