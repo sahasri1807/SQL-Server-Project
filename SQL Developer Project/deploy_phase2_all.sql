@@ -1,6 +1,7 @@
-PRINT 'Deploying Music Streaming Database Phase 2';
+PRINT 'Deploying Music Streaming Database';
 GO
 
+/* -------------------- Phase 2 -------------------- */
 :r migrations/001_Phase2_SchemaExtensions.sql
 :r schema/seed_reference_data.sql
 
@@ -29,5 +30,17 @@ GO
 PRINT 'Phase 2 Deployment Completed';
 GO
 
-PRINT 'Next: test_cases/test_cases.sql';
+/* -------------------- Phase 3 -------------------- */
+PRINT 'Deploying Phase 3 Optimization (indexes)';
+GO
+
+:r optimization/indexes.sql
+
+PRINT 'Phase 3 Indexes Completed';
+GO
+
+PRINT 'Next: test_data.sql (optional fuller sample data)';
+PRINT 'Then: test_cases/test_cases.sql';
+PRINT 'Then: optimization/performance_test.sql';
+PRINT 'Then: optimization/execution_plans.sql';
 GO

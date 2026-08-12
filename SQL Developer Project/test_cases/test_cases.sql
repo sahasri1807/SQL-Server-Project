@@ -1,13 +1,23 @@
 /*
 ==============================================================================
-  Test cases : transaction_tests.sql
-  Demonstrates BEGIN / COMMIT / ROLLBACK / TRY / CATCH for Phase 2 scenarios:
+  Test cases : test_cases.sql
+  Combined Phase 2 transaction tests + Phase 3 isolation / deadlock demo.
+
+  Part A — Transactions (BEGIN / COMMIT / ROLLBACK / TRY / CATCH):
     1) Successful transactions
     2) Failed rollback
     3) Duplicate playlist song
     4) Invalid subscription
     5) Invalid song delete
-  Prerequisites: Phase 1 tables + Phase 2 migration/objects + seed_reference_data
+
+  Part B — Isolation & deadlock awareness (spec 5.4):
+    6) Current isolation level
+    7) READ COMMITTED transactional update
+    8) LOCK_TIMEOUT awareness
+    9) Two-window deadlock walkthrough (comments)
+   10) REPEATABLE READ transactional read
+
+  Prerequisites: Phase 1 tables + Phase 2 migration/objects + seed / test_data
 ==============================================================================
 */
 
@@ -236,4 +246,132 @@ END CATCH
 GO
 
 PRINT '========== TRANSACTION TESTS COMPLETE ==========';
+GO
+
+/* ==========================================================================
+   PART B — ISOLATION / DEADLOCK DEMO (spec 5.4)
+   ========================================================================== */
+
+PRINT '========== ISOLATION / DEADLOCK DEMO START ==========';
+GO
+
+/* --------------------------------------------------------------------------
+   6) Show current isolation level
+   -------------------------------------------------------------------------- */
+PRINT '--- Test 6: Current isolation level ---';
+DBCC USEROPTIONS;
+GO
+
+/* --------------------------------------------------------------------------
+   7) READ COMMITTED short transaction with TRY/CATCH
+   -------------------------------------------------------------------------- */
+PRINT '--- Test 7: READ COMMITTED transactional update ---';
+GO
+
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+BEGIN TRY
+    BEGIN TRANSACTION;
+
+    UPDATE dbo.Songs
+    SET PlayCount = PlayCount
+    WHERE SongID = (SELECT TOP 1 SongID FROM dbo.Songs ORDER BY SongID);
+
+    COMMIT TRANSACTION;
+    PRINT 'TEST7_PASS: READ COMMITTED update committed.';
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+    PRINT 'TEST7_FAIL: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+/* --------------------------------------------------------------------------
+   8) Lock timeout awareness (LOCK_TIMEOUT)
+   -------------------------------------------------------------------------- */
+PRINT '--- Test 8: LOCK_TIMEOUT awareness ---';
+GO
+
+BEGIN TRY
+    SET LOCK_TIMEOUT 1000; -- 1 second
+
+    BEGIN TRANSACTION;
+
+    UPDATE dbo.Songs WITH (ROWLOCK, UPDLOCK)
+    SET Title = Title
+    WHERE SongID = (SELECT TOP 1 SongID FROM dbo.Songs ORDER BY SongID);
+
+    PRINT 'Held UPDLOCK inside transaction (demo). Releasing...';
+
+    COMMIT TRANSACTION;
+    PRINT 'TEST8_PASS: Lock demo transaction committed.';
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+    PRINT 'TEST8_INFO: Caught lock/transaction error: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+SET LOCK_TIMEOUT -1; -- reset to default (wait forever)
+GO
+
+/* --------------------------------------------------------------------------
+   9) TWO-SESSION DEADLOCK DEMO (manual — instructor Q&A)
+
+   Window A:
+     BEGIN TRAN;
+     UPDATE dbo.Songs SET PlayCount = PlayCount WHERE SongID = 1;
+     -- wait, then:
+     UPDATE dbo.Users SET FullName = FullName WHERE UserID = 1;
+
+   Window B (run after Window A first update):
+     BEGIN TRAN;
+     UPDATE dbo.Users SET FullName = FullName WHERE UserID = 1;
+     UPDATE dbo.Songs SET PlayCount = PlayCount WHERE SongID = 1;
+
+   One session will be chosen as deadlock victim (error 1205).
+   Always ROLLBACK both windows afterward.
+
+   Catch pattern for victim session:
+     BEGIN TRY
+       ... updates ...
+     END TRY
+     BEGIN CATCH
+       IF ERROR_NUMBER() = 1205
+         PRINT 'Deadlock victim — transaction rolled back / retry.';
+       IF @@TRANCOUNT > 0 ROLLBACK;
+     END CATCH
+   -------------------------------------------------------------------------- */
+PRINT '--- Test 9: See script comments for two-window deadlock walkthrough ---';
+PRINT 'Deadlock victim error number is 1205.';
+GO
+
+/* --------------------------------------------------------------------------
+   10) REPEATABLE READ short demo
+   -------------------------------------------------------------------------- */
+PRINT '--- Test 10: REPEATABLE READ transactional read ---';
+GO
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+BEGIN TRY
+    BEGIN TRANSACTION;
+
+    SELECT TOP 3 SongID, Title, PlayCount
+    FROM dbo.Songs
+    ORDER BY SongID;
+
+    COMMIT TRANSACTION;
+    PRINT 'TEST10_PASS: REPEATABLE READ read committed.';
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+    PRINT 'TEST10_FAIL: ' + ERROR_MESSAGE();
+END CATCH
+GO
+
+-- Reset to default
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+GO
+
+PRINT '========== ISOLATION / DEADLOCK DEMO COMPLETE ==========';
+PRINT '========== ALL TEST CASES COMPLETE ==========';
 GO

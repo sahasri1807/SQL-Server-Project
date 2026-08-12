@@ -66,7 +66,15 @@ SQL Developer Project/
   test_cases/transaction_tests.sql
   deploy_phase2.sql       -- execution order checklist
   deploy_phase2_all.sql   -- one-shot concatenated deploy
+
 ```
+
+## Phase 3 optimization
+
+Indexes in `optimization/indexes.sql`: PK clustered defaults; `IX_Songs_ArtistID` (NC+INCLUDE); `IX_ListeningHistory_UserID_Include`; `IX_Songs_PlayCount_Filtered`
+
+Also: `performance_test.sql` (STATISTICS), `execution_plans.sql` (SHOWPLAN_TEXT), `performance_notes.md`, `check_exisiting_indexes.sql`, `test_data.sql`
+
 
 ### Objects delivered
 
@@ -159,3 +167,25 @@ SELECT * FROM dbo.GetUserSubscriptionStatus(1);
 - Clustered and non-clustered indexes implemented
 - Query execution plan analysis performed
 - Performance improved using indexing strategies
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
