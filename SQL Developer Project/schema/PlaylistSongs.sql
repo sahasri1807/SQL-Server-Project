@@ -7,4 +7,4 @@ CREATE TABLE PlaylistSongs (
 
     FOREIGN KEY (PlaylistID) REFERENCES Playlists(PlaylistID),
     FOREIGN KEY (SongID) REFERENCES Songs(SongID)
-);
+); 
