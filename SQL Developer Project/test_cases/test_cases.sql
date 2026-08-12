@@ -14,8 +14,10 @@
     6) Current isolation level
     7) READ COMMITTED transactional update
     8) LOCK_TIMEOUT awareness
-    9) Two-window deadlock walkthrough (comments)
+    9) Simple transaction lock test
    10) REPEATABLE READ transactional read
+
+  Additional tests 11-18
 
   Prerequisites: Phase 1 tables + Phase 2 migration/objects + seed / test_data
 ==============================================================================
@@ -315,35 +317,7 @@ SET LOCK_TIMEOUT -1; -- reset to default (wait forever)
 GO
 
 /* --------------------------------------------------------------------------
-<<<<<<< HEAD
-   9) TWO-SESSION DEADLOCK DEMO (manual — instructor Q&A)
-
-   Window A:
-     BEGIN TRAN;
-     UPDATE music.Songs SET PlayCount = PlayCount WHERE SongID = 1;
-     -- wait, then:
-     UPDATE music.Users SET FullName = FullName WHERE UserID = 1;
-
-   Window B (run after Window A first update):
-     BEGIN TRAN;
-     UPDATE music.Users SET FullName = FullName WHERE UserID = 1;
-     UPDATE music.Songs SET PlayCount = PlayCount WHERE SongID = 1;
-
-   One session will be chosen as deadlock victim (error 1205).
-   Always ROLLBACK both windows afterward.
-
-   Catch pattern for victim session:
-     BEGIN TRY
-       ... updates ...
-     END TRY
-     BEGIN CATCH
-       IF ERROR_NUMBER() = 1205
-         PRINT 'Deadlock victim — transaction rolled back / retry.';
-       IF @@TRANCOUNT > 0 ROLLBACK;
-     END CATCH
-=======
    9) SIMPLE TRANSACTION LOCK TEST
->>>>>>> c267762 (added ss)
    -------------------------------------------------------------------------- */
 PRINT '--- Test 9: Simple transaction lock test ---';
 GO
@@ -352,9 +326,9 @@ BEGIN TRY
 
     BEGIN TRANSACTION;
 
-    UPDATE dbo.Songs
+    UPDATE music.Songs
     SET PlayCount = PlayCount
-    WHERE SongID = (SELECT TOP 1 SongID FROM dbo.Songs ORDER BY SongID);
+    WHERE SongID = (SELECT TOP 1 SongID FROM music.Songs ORDER BY SongID);
 
     IF @@TRANCOUNT = 1
         PRINT 'TEST9_PASS: Transaction lock was created successfully.';
@@ -420,7 +394,7 @@ BEGIN TRY
     DECLARE @UID11 INT;
 
     /* Create first user */
-    EXEC dbo.AddNewUser
+    EXEC app.AddNewUser
         @FullName = 'Duplicate Email User 1',
         @Email = @Email11,
         @RoleName = 'User',
@@ -428,7 +402,7 @@ BEGIN TRY
 
     /* Try creating second user with same email */
     BEGIN TRY
-        EXEC dbo.AddNewUser
+        EXEC app.AddNewUser
             @FullName = 'Duplicate Email User 2',
             @Email = @Email11,
             @RoleName = 'User',
@@ -458,7 +432,7 @@ BEGIN TRY
     DECLARE @Playlist12 INT;
 
     BEGIN TRY
-        EXEC dbo.CreatePlaylist
+        EXEC app.CreatePlaylist
             @UserID = -999999,
             @PlaylistName = 'Invalid User Playlist',
             @NewPlaylistID = @Playlist12 OUTPUT;
@@ -486,14 +460,14 @@ BEGIN TRY
 
     DECLARE @Song13 INT;
     DECLARE @Aid13 INT =
-        (SELECT TOP 1 ArtistID FROM dbo.Artists ORDER BY ArtistID);
+        (SELECT TOP 1 ArtistID FROM music.Artists ORDER BY ArtistID);
     DECLARE @Alid13 INT =
-        (SELECT TOP 1 AlbumID FROM dbo.Albums ORDER BY AlbumID);
+        (SELECT TOP 1 AlbumID FROM music.Albums ORDER BY AlbumID);
     DECLARE @Gid13 INT =
-        (SELECT TOP 1 GenreID FROM dbo.Genres ORDER BY GenreID);
+        (SELECT TOP 1 GenreID FROM music.Genres ORDER BY GenreID);
 
     BEGIN TRY
-        EXEC dbo.AddSong
+        EXEC app.AddSong
             @Title = 'Invalid Duration Song',
             @Duration = -100,
             @ArtistID = @Aid13,
@@ -529,7 +503,7 @@ BEGIN TRY
         REPLACE(CONVERT(VARCHAR(36), NEWID()), '-', '') +
         '@test.com';
 
-    EXEC dbo.AddNewUser
+    EXEC app.AddNewUser
         @FullName = 'Subscription Rollback User',
         @Email = @Email14,
         @RoleName = 'User',
@@ -537,7 +511,7 @@ BEGIN TRY
 
     BEGIN TRANSACTION;
 
-    EXEC dbo.ManageSubscription
+    EXEC app.ManageSubscription
         @UserID = @UID14,
         @SubscriptionType = 'Premium',
         @Price = 9.99,
@@ -558,7 +532,7 @@ BEGIN CATCH
     IF NOT EXISTS
     (
         SELECT 1
-        FROM dbo.Subscriptions
+        FROM music.Subscriptions
         WHERE SubscriptionID = @Sub14
     )
         PRINT 'TEST14_PASS: Subscription was rolled back.';
@@ -576,243 +550,36 @@ PRINT '--- Test 15: Listening history PlayCount trigger ---';
 GO
 
 BEGIN TRY
+    DECLARE @UserID INT =
+        (SELECT TOP 1 UserID FROM music.Users ORDER BY UserID);
+    DECLARE @SongID INT =
+        (SELECT TOP 1 SongID FROM music.Songs ORDER BY SongID);
+    DECLARE @Before INT;
+    DECLARE @After INT;
 
-    DECLARE @UID15 INT;
-    DECLARE @SID15 INT;
-    DECLARE @BeforePlayCount15 INT;
-    DECLARE @AfterPlayCount15 INT;
+    IF @UserID IS NULL OR @SongID IS NULL
+        THROW 59915, 'Need at least one user and one song for Test 15.', 1;
 
-    DECLARE @Aid15 INT =
-        (SELECT TOP 1 ArtistID FROM dbo.Artists ORDER BY ArtistID);
-    DECLARE @Alid15 INT =
-        (SELECT TOP 1 AlbumID FROM dbo.Albums ORDER BY AlbumID);
-    DECLARE @Gid15 INT =
-        (SELECT TOP 1 GenreID FROM dbo.Genres ORDER BY GenreID);
+    SELECT @Before = PlayCount
+    FROM music.Songs
+    WHERE SongID = @SongID;
 
-    DECLARE @Email15 VARCHAR(100) =
-        'txn_trigger_' +
-        REPLACE(CONVERT(VARCHAR(36), NEWID()), '-', '') +
-        '@test.com';
+    INSERT INTO music.ListeningHistory (UserID, SongID)
+    VALUES
+        (@UserID, @SongID),
+        (@UserID, @SongID),
+        (@UserID, @SongID);
 
-    EXEC dbo.AddNewUser
-        @FullName = 'Trigger Test User',
-        @Email = @Email15,
-        @RoleName = 'User',
-        @NewUserID = @UID15 OUTPUT;
+    SELECT @After = PlayCount
+    FROM music.Songs
+    WHERE SongID = @SongID;
 
-    EXEC dbo.AddSong
-        @Title = 'Trigger Test Song',
-        @Duration = 180,
-        @ArtistID = @Aid15,
-        @AlbumID = @Alid15,
-        @GenreID = @Gid15,
-        @NewSongID = @SID15 OUTPUT;
-
-    SET @BeforePlayCount15 =
-        dbo.GetSongPlayCount(@SID15);
-
-    /* Add three listening-history records */
-    INSERT INTO dbo.ListeningHistory (UserID, SongID)
-    VALUES (@UID15, @SID15);
-
-    INSERT INTO dbo.ListeningHistory (UserID, SongID)
-    VALUES (@UID15, @SID15);
-
-    INSERT INTO dbo.ListeningHistory (UserID, SongID)
-    VALUES (@UID15, @SID15);
-
-    SET @AfterPlayCount15 =
-        dbo.GetSongPlayCount(@SID15);
-
-    IF @AfterPlayCount15 = @BeforePlayCount15 + 3
+    IF @After = @Before + 3
         PRINT 'TEST15_PASS: PlayCount trigger incremented correctly.';
     ELSE
         PRINT 'TEST15_FAIL: PlayCount did not increment correctly.';
-
 END TRY
 BEGIN CATCH
     PRINT 'TEST15_FAIL: ' + ERROR_MESSAGE();
-END CATCH
-GO
-
-
-/* --------------------------------------------------------------------------
-   16) VALID SONG DELETE
-   -------------------------------------------------------------------------- */
-PRINT '--- Test 16: Valid song delete ---';
-GO
-
-BEGIN TRY
-
-    DECLARE @SID16 INT;
-
-    DECLARE @Aid16 INT =
-        (SELECT TOP 1 ArtistID FROM dbo.Artists ORDER BY ArtistID);
-    DECLARE @Alid16 INT =
-        (SELECT TOP 1 AlbumID FROM dbo.Albums ORDER BY AlbumID);
-    DECLARE @Gid16 INT =
-        (SELECT TOP 1 GenreID FROM dbo.Genres ORDER BY GenreID);
-
-    EXEC dbo.AddSong
-        @Title = 'Safe Delete Song',
-        @Duration = 150,
-        @ArtistID = @Aid16,
-        @AlbumID = @Alid16,
-        @GenreID = @Gid16,
-        @NewSongID = @SID16 OUTPUT;
-
-    /* Delete unreferenced song */
-    DELETE FROM dbo.Songs
-    WHERE SongID = @SID16;
-
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM dbo.Songs
-        WHERE SongID = @SID16
-    )
-        PRINT 'TEST16_PASS: Unreferenced song deleted successfully.';
-    ELSE
-        PRINT 'TEST16_FAIL: Unreferenced song still exists.';
-
-END TRY
-BEGIN CATCH
-    PRINT 'TEST16_FAIL: ' + ERROR_MESSAGE();
-END CATCH
-GO
-
-
-/* --------------------------------------------------------------------------
-   17) UPDATE TRANSACTION ROLLBACK
-   -------------------------------------------------------------------------- */
-PRINT '--- Test 17: Update transaction rollback ---';
-GO
-
-BEGIN TRY
-
-    DECLARE @UID17 INT;
-    DECLARE @OriginalName17 VARCHAR(100);
-    DECLARE @Email17 VARCHAR(100) =
-        'txn_updaterollback_' +
-        REPLACE(CONVERT(VARCHAR(36), NEWID()), '-', '') +
-        '@test.com';
-
-    EXEC dbo.AddNewUser
-        @FullName = 'Original Transaction Name',
-        @Email = @Email17,
-        @RoleName = 'User',
-        @NewUserID = @UID17 OUTPUT;
-
-    SET @OriginalName17 =
-        (SELECT FullName
-         FROM dbo.Users
-         WHERE UserID = @UID17);
-
-    BEGIN TRY
-
-        BEGIN TRANSACTION;
-
-        UPDATE dbo.Users
-        SET FullName = 'Changed Name That Should Rollback'
-        WHERE UserID = @UID17;
-
-        /* Force transaction failure */
-        THROW 59917, 'Intentional update failure.', 1;
-
-        COMMIT TRANSACTION;
-
-    END TRY
-    BEGIN CATCH
-
-        IF @@TRANCOUNT > 0
-            ROLLBACK TRANSACTION;
-
-        IF EXISTS
-        (
-            SELECT 1
-            FROM dbo.Users
-            WHERE UserID = @UID17
-              AND FullName = @OriginalName17
-        )
-            PRINT 'TEST17_PASS: UPDATE was successfully rolled back.';
-        ELSE
-            PRINT 'TEST17_FAIL: UPDATE was not rolled back.';
-
-    END CATCH
-
-END TRY
-BEGIN CATCH
-    PRINT 'TEST17_SETUP_FAIL: ' + ERROR_MESSAGE();
-END CATCH
-GO
-
-
-/* --------------------------------------------------------------------------
-   18) REMOVE SONG FROM PLAYLIST
-   -------------------------------------------------------------------------- */
-PRINT '--- Test 18: Remove song from playlist ---';
-GO
-
-BEGIN TRY
-
-    DECLARE @UID18 INT;
-    DECLARE @PID18 INT;
-    DECLARE @SID18 INT;
-
-    DECLARE @Aid18 INT =
-        (SELECT TOP 1 ArtistID FROM dbo.Artists ORDER BY ArtistID);
-    DECLARE @Alid18 INT =
-        (SELECT TOP 1 AlbumID FROM dbo.Albums ORDER BY AlbumID);
-    DECLARE @Gid18 INT =
-        (SELECT TOP 1 GenreID FROM dbo.Genres ORDER BY GenreID);
-
-    DECLARE @Email18 VARCHAR(100) =
-        'txn_remove_' +
-        REPLACE(CONVERT(VARCHAR(36), NEWID()), '-', '') +
-        '@test.com';
-
-    EXEC dbo.AddNewUser
-        @FullName = 'Remove Song User',
-        @Email = @Email18,
-        @RoleName = 'User',
-        @NewUserID = @UID18 OUTPUT;
-
-    EXEC dbo.CreatePlaylist
-        @UserID = @UID18,
-        @PlaylistName = 'Remove Song Playlist',
-        @NewPlaylistID = @PID18 OUTPUT;
-
-    EXEC dbo.AddSong
-        @Title = 'Remove From Playlist Song',
-        @Duration = 200,
-        @ArtistID = @Aid18,
-        @AlbumID = @Alid18,
-        @GenreID = @Gid18,
-        @NewSongID = @SID18 OUTPUT;
-
-    /* Add song to playlist */
-    EXEC dbo.AddSongToPlaylist
-        @PlaylistID = @PID18,
-        @SongID = @SID18;
-
-    /* Remove song from playlist */
-    DELETE FROM dbo.PlaylistSongs
-    WHERE PlaylistID = @PID18
-      AND SongID = @SID18;
-
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM dbo.PlaylistSongs
-        WHERE PlaylistID = @PID18
-          AND SongID = @SID18
-    )
-        PRINT 'TEST18_PASS: Song removed from playlist successfully.';
-    ELSE
-        PRINT 'TEST18_FAIL: Song still exists in playlist.';
-
-END TRY
-BEGIN CATCH
-    PRINT 'TEST18_FAIL: ' + ERROR_MESSAGE();
 END CATCH
 GO

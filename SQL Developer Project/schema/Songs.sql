@@ -12,3 +12,4 @@ CREATE TABLE music.Songs (
     FOREIGN KEY (AlbumID) REFERENCES music.Albums(AlbumID),
     FOREIGN KEY (GenreID) REFERENCES music.Genres(GenreID)
 );
+
