@@ -8,8 +8,7 @@
   Note      : Requires migrations/001_Phase2_SchemaExtensions.sql
 ==============================================================================
 */
-CREATE OR ALTER PROCEDURE dbo.ManageSubscription
-    @UserID           INT,
+CREATE OR ALTER PROCEDURE 
     @SubscriptionType VARCHAR(50),
     @Price            DECIMAL(10,2),
     @Months           INT = 1,
