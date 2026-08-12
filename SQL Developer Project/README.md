@@ -83,7 +83,7 @@ SQL Developer Project/
   security/               -- permissions
   test_cases/             -- test_cases.sql + test_data.sql
   optimization/           -- indexes + query optimization + performance tests
-  deploy_final.sql        -- complete Phase 1 + Phase 2 + Phase 3 deployment
+  final_script.sql        -- complete Phase 1 + Phase 2 + Phase 3 deployment
 
 ```
 
@@ -136,9 +136,8 @@ Covers successful transactions, failed ROLLBACK, duplicate playlist song, invali
 1. Create a database (e.g. `MusicStreamingDB`) and select it in the SSMS database dropdown.
 2. Run all Phase 1 scripts in `schema/` (tables only — skip seed until after migration if you prefer):
    - `Roles.sql` → `Users.sql` → `Artists.sql` → `Albums.sql` → `Genres.sql` → `Songs.sql` → `Playlists.sql` → `PlaylistSongs.sql` → `ListeningHistory.sql` → `Subscriptions.sql`
-3. **Option A (recommended):** execute `deploy_phase2_all.sql`, then `test_cases/transaction_tests.sql`.
-4. **Option B:** execute files one-by-one using the order in `deploy_phase2.sql`.
-5. Optional: uncomment the permission test harness at the bottom of `security/permissions.sql`.
+3. execute `final_script.sql`, then 'test_cases/test_data.sql` and finally `test_cases/test_cases.sql`.
+4. Optional: uncomment the permission test harness at the bottom of `security/permissions.sql`.
 
 ### Quick smoke checks after deploy
 ```sql
