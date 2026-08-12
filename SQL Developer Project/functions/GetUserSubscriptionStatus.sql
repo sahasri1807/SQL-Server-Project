@@ -7,7 +7,7 @@
               Users (Status)
   Note      : Requires migrations/001_Phase2_SchemaExtensions.sql
 ==============================================================================
-*/
+*/ 
 CREATE OR ALTER FUNCTION dbo.GetUserSubscriptionStatus
 (
     @UserID INT
