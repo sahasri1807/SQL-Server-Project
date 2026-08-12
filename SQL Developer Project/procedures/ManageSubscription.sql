@@ -64,7 +64,9 @@ BEGIN
         WHERE UserID = @UserID;
 
         COMMIT TRANSACTION;
-0))
+
+        PRINT 'Subscription updated. SubscriptionID = '
+            + CAST(@NewSubscriptionID AS VARCHAR(20))
             + '; User Status = ' + @NewStatus;
     END TRY
     BEGIN CATCH
