@@ -6,7 +6,10 @@
   Uses      : Songs.Title, Artists.ArtistName, Genres.GenreName, Songs.PlayCount
 ==============================================================================
 */
-CREATE OR ALTER PROC
+CREATE OR ALTER PROCEDURE app.SearchSongsDynamic
+    @GenreName  VARCHAR(50)  = NULL,
+    @ArtistName VARCHAR(100) = NULL,
+    @Title      VARCHAR(100) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
