@@ -7,7 +7,7 @@
               trigger trg_LogStreamingActivity). ListeningHistory COUNT is
               available as a cross-check via optional comment below.
 ==============================================================================
-*/
+*/ 
 CREATE OR ALTER FUNCTION dbo.GetSongPlayCount
 (
     @SongID INT
