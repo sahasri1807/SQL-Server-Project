@@ -12,7 +12,7 @@ CREATE OR ALTER PROCEDURE app.AddSong
     @AlbumID     INT,
     @GenreID     INT,
     @ReleaseDate DATE = NULL,
-    @NewSongID 
+    @NewSongID   INT OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
