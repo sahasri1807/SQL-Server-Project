@@ -5,8 +5,7 @@
   Uses      : Users (FullName, Email, RoleID, Status), Roles (RoleName)
 ==============================================================================
 */
-CREATE OR ALTER PROCEDURE dbo.AddNewUser
-    @FullName   VARCHAR(100),
+CREATE OR ALTER PR
     @Email      VARCHAR(100),
     @RoleName   VARCHAR(50) = 'User',   -- default application role from Roles
     @NewUserID  INT OUTPUT
