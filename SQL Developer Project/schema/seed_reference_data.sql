@@ -4,7 +4,7 @@
   Purpose : Minimal reference rows so Phase 2 procedures can be demonstrated.
             Idempotent inserts for Roles, Genres, and a sample Artist/Album.
 ==============================================================================
-*/
+*/ 
 SET NOCOUNT ON;
 GO
 
