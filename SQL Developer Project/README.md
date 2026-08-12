@@ -126,18 +126,21 @@ Each procedure uses parameters, validation, `IF`, `TRY/CATCH`, and transactions 
 #### Security (`security/permissions.sql`)
 SQL Server roles: **MusicAdmin**, **MusicUser**, **MusicArtist**, **MusicModerator** with GRANT / REVOKE / DENY. Includes commented permission smoke tests per role.
 
-#### Tests (`test_cases/transaction_tests.sql`)
+#### Tests (`test_cases/test_cases.sql`)
 Covers successful transactions, failed ROLLBACK, duplicate playlist song, invalid subscription, and invalid song delete (`BEGIN` / `COMMIT` / `ROLLBACK` / `TRY` / `CATCH`).
 
 ---
 
 ## How to run in SSMS (order)
 
-1. Create a database (e.g. `MusicStreamingDB`) and select it in the SSMS database dropdown.
-2. Run all Phase 1 scripts in `schema/` (tables only — skip seed until after migration if you prefer):
-   - `Roles.sql` → `Users.sql` → `Artists.sql` → `Albums.sql` → `Genres.sql` → `Songs.sql` → `Playlists.sql` → `PlaylistSongs.sql` → `ListeningHistory.sql` → `Subscriptions.sql`
-3. execute `final_script.sql`, then 'test_cases/test_data.sql` and finally `test_cases/test_cases.sql`.
-4. Optional: uncomment the permission test harness at the bottom of `security/permissions.sql`.
+1. Create a database (e.g. `MusicStreamingDB`) and **select it** in the SSMS database dropdown.
+2. Enable **Query → SQLCMD Mode** (required for `:r` includes in `final_script.sql`).
+3. Open and execute `final_script.sql`  
+   (creates Phase 1 tables + Phase 2 objects + Phase 3 indexes in one run).
+4. Execute `test_cases/test_data.sql` (sample data).
+5. Execute `test_cases/test_cases.sql` (transaction + isolation tests).
+6. Optional: run `optimization/performance_test.sql` and `optimization/execution_plans.sql`.
+7. Optional: uncomment the permission test harness at the bottom of `security/permissions.sql`.
 
 ### Quick smoke checks after deploy
 ```sql

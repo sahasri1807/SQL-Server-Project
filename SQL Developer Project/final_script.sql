@@ -77,5 +77,5 @@ PRINT '>>> optimization/indexes.sql';
 :r optimization/indexes.sql
 
 PRINT '========== FINAL SCRIPT COMPLETE ==========';
-PRINT 'Next: test_data.sql then test_cases/test_cases.sql';
+PRINT 'Next: test_cases/test_data.sql then test_cases/test_cases.sql';
 GO
