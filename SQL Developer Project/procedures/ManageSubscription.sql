@@ -8,7 +8,6 @@
   Note      : Requires migrations/001_Phase2_SchemaExtensions.sql
 ==============================================================================
 */
-CREATE OR ALTER PROCEDURE dbo.ManageSubscription
     @UserID           INT,
     @SubscriptionType VARCHAR(50),
     @Price            DECIMAL(10,2),
