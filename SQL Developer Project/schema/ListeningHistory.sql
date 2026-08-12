@@ -6,4 +6,4 @@ CREATE TABLE ListeningHistory (
 
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (SongID) REFERENCES Songs(SongID)
-);
+); 
