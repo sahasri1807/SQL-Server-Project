@@ -4,4 +4,4 @@ CREATE TABLE Subscriptions (
     Price DECIMAL(10,2) NOT NULL,
     StartDate DATE,
     EndDate DATE
-);
+); 
