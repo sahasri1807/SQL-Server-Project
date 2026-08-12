@@ -14,7 +14,8 @@ BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
 
-    DECLARE @Error0);
+    DECLARE @ErrorMessage NVARCHAR(4000);
+    DECLARE @UserStatus VARCHAR(20);
 
     BEGIN TRY
         IF @UserID IS NULL
