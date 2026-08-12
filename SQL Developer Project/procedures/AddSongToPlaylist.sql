@@ -13,6 +13,7 @@ BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
 
+    DECLARE @ErrorMessage NVARCHAR(4000);
 
     BEGIN TRY
         IF @PlaylistID IS NULL OR NOT EXISTS (SELECT 1 FROM music.Playlists WHERE PlaylistID = @PlaylistID)
