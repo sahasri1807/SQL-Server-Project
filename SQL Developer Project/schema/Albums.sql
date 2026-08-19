@@ -1,5 +1,3 @@
-Use MusicStreamingDB
-GO
 
 CREATE TABLE music.Albums (
     AlbumID INT IDENTITY(1,1) PRIMARY KEY,
