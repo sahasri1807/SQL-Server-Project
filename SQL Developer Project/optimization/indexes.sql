@@ -1,5 +1,4 @@
-USE MusicStreamingDB;
-GO
+
 
 SET NOCOUNT ON;
 GO
