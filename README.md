@@ -9,6 +9,39 @@ The system is fully backend-driven with no frontend, no ORM, and no GUI tools. I
 
 ---
 
+## Business case
+A streaming service needs one place that stores users, songs, playlists, plays, and who is paying. If that data is messy — duplicate emails, the same song twice on a playlist, play counts that don’t match history, someone deleting a song that’s still on playlists — the app breaks and they lose money / trust. We built a SQL Server database that keeps that data clean, lets staff and users do those jobs through procedures, and stays fast when there’s more listening history.
+
+## Business scenario
+Daily life of the platform:
+
+A listener signs up, searches songs, makes a playlist, plays tracks, upgrades to Premium.
+An artist uploads a song to an album/genre.
+The company needs to know play counts, listening history, and who is on which plan.
+Admins can do everything; a normal user should not create accounts or delete songs.
+Example: user plays a song → a history row is saved → play count goes up automatically. They try to add the same song to a playlist twice → blocked. They try to delete a song that’s still on a playlist → blocked.
+
+Problem it’s solving
+
+Problem without a proper DB	What we do
+- Artist name typed on every song (duplicates, typos)
+- Normalized tables: song points at ArtistID
+- Two accounts with the same email
+- Unique email + AddNewUser check
+- Playlist with the same song twice
+- Procedure + trigger + composite key
+- Play count doesn’t match what people actually played
+- Trigger on listening history
+- Delete a popular song and break playlists/history
+- Delete trigger blocks it
+- Half a subscription saved if something fails
+- Transactions + rollback
+- Users doing admin stuff
+- SQL Server roles GRANT/DENY
+- Slow “songs by this artist” / “this user’s history”
+- Indexes
+---
+
 ##  Database Features
 
 The system includes the following core modules:
